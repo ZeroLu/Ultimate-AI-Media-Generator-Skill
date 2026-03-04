@@ -1,9 +1,8 @@
----
-name: ultimate-ai-image-video-generator
+name: ultimate-ai-media-generator-skill
 description: Generate and monitor CyberBara Public API v1 image and video tasks end-to-end. Use when work involves CyberBara `/api/v1` endpoints for listing models, uploading reference images, quoting credits, creating generation tasks, polling task status, or checking credits balance and usage.
 ---
 
-# Ultimate Ai Image Video Generator
+# Ultimate-AI-Media-Generator-Skill
 
 ## Overview
 
