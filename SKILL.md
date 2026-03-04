@@ -1,3 +1,4 @@
+---
 name: ultimate-ai-media-generator-skill
 description: Generate and monitor CyberBara Public API v1 image and video tasks end-to-end. Use when work involves CyberBara `/api/v1` endpoints for listing models, uploading reference images, quoting credits, creating generation tasks, polling task status, or checking credits balance and usage.
 ---
@@ -37,10 +38,17 @@ API key lookup order:
 3. local cache file `~/.config/cyberbara/api_key`
 4. interactive prompt (if running in terminal)
 
-You can still export API key manually:
+Recommended one-time setup command:
+
+```bash
+python3 scripts/cyberbara_api.py setup-api-key "<api-key>"
+```
+
+Or save from environment variable:
 
 ```bash
 export CYBERBARA_API_KEY="<api-key>"
+python3 scripts/cyberbara_api.py setup-api-key --from-env
 ```
 
 If API key is missing, the script immediately asks for it and shows where to get one:
@@ -158,6 +166,7 @@ python3 scripts/cyberbara_api.py generate-video --json '{...}' --yes --async
 
 `scripts/cyberbara_api.py` supports:
 
+- `setup-api-key` to persist API key into local cache
 - `models` to list public models (`--media-type image|video` optional)
 - `upload-images` to upload local image files to `/api/v1/uploads/images`
 - `quote` to estimate credit cost from JSON request body

@@ -45,11 +45,26 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 
 - https://cyberbara.com/settings/apikeys
 
-配置：
+推荐一次性持久化配置：
+
+```bash
+python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
+```
+
+该命令会把 key 保存到 `~/.config/cyberbara/api_key`，后续无需每次重新 `export`。
+
+或者从环境变量写入本地缓存：
 
 ```bash
 export CYBERBARA_API_KEY="<your_api_key>"
+python3 scripts/cyberbara_api.py setup-api-key --from-env
 ```
+
+API key 读取优先级：
+1. `--api-key`
+2. `CYBERBARA_API_KEY`
+3. `~/.config/cyberbara/api_key`
+4. 交互输入
 
 ### 第三步：在不同平台中用 prompt 调用
 

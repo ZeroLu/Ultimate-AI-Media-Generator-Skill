@@ -52,10 +52,19 @@ Get your API key:
 
 - https://cyberbara.com/settings/apikeys
 
-Configure it:
+Configure it once (recommended):
+
+```bash
+python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
+```
+
+This stores your key at `~/.config/cyberbara/api_key`, so you do not need to export it every session.
+
+Or save from environment:
 
 ```bash
 export CYBERBARA_API_KEY="<your_api_key>"
+python3 scripts/cyberbara_api.py setup-api-key --from-env
 ```
 
 API key resolution order:
@@ -145,6 +154,7 @@ Curated prompts:
 ## Core Commands (CLI)
 
 ```bash
+python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 python3 scripts/cyberbara_api.py models --media-type image
 python3 scripts/cyberbara_api.py models --media-type video
 python3 scripts/cyberbara_api.py quote --json '{...}'

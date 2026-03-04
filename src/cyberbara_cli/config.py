@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import sys
+from typing import Any
 
 from cyberbara_cli.constants import API_KEY_PAGE_URL
 
@@ -14,6 +15,15 @@ API_KEY_STORE_PATH = Path.home() / ".config" / "cyberbara" / "api_key"
 
 def _normalize_api_key(api_key: str | None) -> str:
     return (api_key or "").strip()
+
+
+def _mask_api_key(api_key: str) -> str:
+    key = _normalize_api_key(api_key)
+    if not key:
+        return ""
+    if len(key) <= 8:
+        return "*" * len(key)
+    return f"{key[:4]}...{key[-4:]}"
 
 
 def load_cached_api_key() -> str | None:
@@ -78,3 +88,43 @@ def resolve_api_key(cli_api_key: str | None) -> str:
 
     return _prompt_and_cache_api_key()
 
+
+def setup_api_key(
+    *,
+    input_api_key: str | None = None,
+    from_env: bool = False,
+) -> dict[str, Any]:
+    """Persist API key to local cache and return non-sensitive metadata."""
+    source = ""
+    key = _normalize_api_key(input_api_key)
+
+    if key:
+        source = "argument"
+    elif from_env:
+        key = _normalize_api_key(os.getenv(API_KEY_ENV_VAR))
+        if not key:
+            raise SystemExit(
+                f"{API_KEY_ENV_VAR} is empty. Export it first or pass key directly."
+            )
+        source = "environment"
+    elif sys.stdin.isatty():
+        print(
+            f"Visit {API_KEY_PAGE_URL} to create one.",
+            file=sys.stderr,
+        )
+        key = _normalize_api_key(input("Please paste your CyberBara API key: "))
+        if not key:
+            raise SystemExit("No API key provided.")
+        source = "interactive_prompt"
+    else:
+        raise SystemExit(
+            "No API key provided. Use `setup-api-key <key>` or `setup-api-key --from-env`."
+        )
+
+    save_cached_api_key(key)
+    return {
+        "saved": True,
+        "source": source,
+        "store_path": str(API_KEY_STORE_PATH),
+        "api_key_masked": _mask_api_key(key),
+    }

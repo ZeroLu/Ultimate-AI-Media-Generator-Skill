@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from typing import Any
 
-from cyberbara_cli.config import resolve_api_key
+from cyberbara_cli.config import resolve_api_key, setup_api_key
 from cyberbara_cli.constants import DEFAULT_BASE_URL, DEFAULT_OUTPUT_DIR
 from cyberbara_cli.gateways import CyberbaraClient
 from cyberbara_cli.output import print_payload
@@ -135,6 +135,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    setup_key_cmd = subparsers.add_parser(
+        "setup-api-key",
+        help="Persist API key to local cache so you do not need to export it every session.",
+    )
+    setup_key_cmd.add_argument(
+        "input_api_key",
+        nargs="?",
+        help="API key value to store (optional if using --from-env or interactive input).",
+    )
+    setup_key_cmd.add_argument(
+        "--from-env",
+        action="store_true",
+        help="Read API key from CYBERBARA_API_KEY and save it to local cache.",
+    )
 
     models_cmd = subparsers.add_parser("models", help="List available models.")
     models_cmd.add_argument(
@@ -316,6 +331,16 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
+
+    if args.command == "setup-api-key":
+        payload = {
+            "data": setup_api_key(
+                input_api_key=args.input_api_key,
+                from_env=args.from_env,
+            )
+        }
+        print_payload(payload, args.compact)
+        return
 
     api_key = resolve_api_key(args.api_key)
 
