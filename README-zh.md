@@ -1,25 +1,55 @@
 # Ultimate-AI-Media-Generator-Skill
 
-一个面向 AI Agent 的开源技能仓库：支持图像与视频生成、积分预估、任务轮询和工作流模板。
+[![GitHub Repo stars](https://img.shields.io/github/stars/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/network/members)
+[![MIT License](https://img.shields.io/github/license/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](./LICENSE)
 
-默认英文说明请看 [README.md](./README.md)。
+![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
+
+一个开源的 **ai image generator skill** 与 **ai video generator skill**，为 AI Agent 提供一站式图像/视频生成能力。支持 Nano Banana 2、Sora 2、Seedance、Kling 等模型，适合内容生产、创意设计与自动化工作流。
+
+[快速开始](#快速开始) | [核心特性](#核心特性) | [支持平台](#支持平台) | [平台调用示例](#platform-prompts) | [典型场景](#典型场景) | [English README](./README.md)
 
 ---
 
-## 核心优势
+## 核心特性
 
-- 基于 CyberBara 的低成本接口能力：很多场景下，比官方 API 更便宜。
-- 生成前可先看积分消耗：先 `quote`，再决定是否提交任务。
-- 内置精选提示词库：由艺术家和提示词工程师整理，新手也能快速出高质量内容。
-- 内置工作流模板：覆盖 `ai ppt skill`、`ai seo article skill`、AI 漫剧创作。
-- 完全开源：可自行修改、二次开发、持续迭代。
-- 多平台兼容：OpenClaw、Claude Code、Codex、Claude Cowork。
+- 🚀 **更高性价比生成**：在很多场景下，CyberBara 成本低于官方模型 API。
+- 💳 **先看积分再提交**：先 `quote` 预估积分，再决定是否发起任务。
+- 🧠 **精选提示词库**：由艺术家与提示词工程师整理，降低上手门槛。
+- 🛠️ **内置工作流模板**：覆盖 **ai ppt skill**、**ai seo article skill**、AI 漫剧创作等场景。
+- 🔓 **完全开源可定制**：支持 fork、改造、二次开发。
+- 🌍 **多 Agent 平台兼容**：面向主流 skill 生态平台可直接使用。
+
+---
+
+## 支持平台
+
+本 skill 支持所有支持 skill 的平台，包括但不限于：
+
+- OpenClaw
+- Claude Code
+- Codex
+- Claude Cowork
+- Cursor
+- Antigravity
+- 其他兼容 skill 的 Agent 平台
 
 ---
 
 ## 快速开始
 
-### 第一步：安装（npx skills）
+### Vibe Install
+
+只需要把下面这句话发给 AI（OpenClaw、Claude Code、Codex 等），AI 会帮你安装：
+
+```text
+Help me install this skill, use command `npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all`
+```
+
+### Manual Install
+
+### Step 1) 安装（npx skills）
 
 ```bash
 # 查看可安装内容
@@ -27,52 +57,30 @@ npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --list
 
 # 安装全部技能
 npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all
+
+# 可选：按指定 Agent 安装（如果你的 skills 运行时支持）
+npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all -a codex -a claude-code
 ```
 
-可选（手动安装）：
+### Step 2) 获取并配置 API Key
 
-```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo ZeroLu/Ultimate-AI-Media-Generator-Skill \
-  --path .
-```
+免费 API Key 获取地址：https://cyberbara.com/settings/apikeys
 
-安装后重启你的 AI Agent。
-
-### 第二步：获取并配置 API Key
-
-获取地址：
-
-- https://cyberbara.com/settings/apikeys
-
-推荐一次性持久化配置：
+推荐一次性配置：
 
 ```bash
 python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 ```
 
-该命令会把 key 保存到 `~/.config/cyberbara/api_key`，后续无需每次重新 `export`。
+该命令会把 key 保存到 `~/.config/cyberbara/api_key`，后续无需每次重复配置。
 
-或者从环境变量写入本地缓存：
+<a id="platform-prompts"></a>
 
-```bash
-export CYBERBARA_API_KEY="<your_api_key>"
-python3 scripts/cyberbara_api.py setup-api-key --from-env
-```
+### Step 3) 在 Codex、Claude Code、OpenClaw、Claude Cowork、Cursor、Antigravity 中使用 skill
 
-API key 读取优先级：
-1. `--api-key`
-2. `CYBERBARA_API_KEY`
-3. `~/.config/cyberbara/api_key`
-4. 交互输入
+你可以直接把下面提示词粘贴到 Agent 对话框，或直接让 Agent 帮你生图/生视频。
 
-### 第三步：在不同平台中用 prompt 调用
-
-触发词：
-
-- `$ultimate-ai-media-generator-skill`
-
-示例（生图）：
+#### A) 生图示例（nano banana skill）
 
 ```text
 Use $ultimate-ai-media-generator-skill to generate one image:
@@ -83,7 +91,7 @@ Use $ultimate-ai-media-generator-skill to generate one image:
 Return task id, final status, and output image URL.
 ```
 
-示例（生视频 + 回退）：
+#### B) 生视频示例（seedance 2.0 skill / sora 2 skill）
 
 ```text
 Use $ultimate-ai-media-generator-skill to generate one video:
@@ -95,7 +103,7 @@ If seedance-2.0-pro is unavailable, fallback to sora-2.
 Return task id and final video URL.
 ```
 
-示例（先查积分）：
+#### C) 生成前先查积分
 
 ```text
 Use $ultimate-ai-media-generator-skill to quote credits before submission for this request:
@@ -107,33 +115,86 @@ Use $ultimate-ai-media-generator-skill to quote credits before submission for th
 Return estimated_credits and can_afford.
 ```
 
+#### D) 查询余额与最近使用记录
+
+```text
+Use $ultimate-ai-media-generator-skill to check current credit balance and the latest 20 usage records.
+```
+
 ---
 
 ## 典型场景
 
-- `ai image generator skill`：社媒配图、广告图、产品图
-- `ai video generator skill`：短视频、分镜预演
-- `ai ppt skill`：生成演示文稿视觉素材
-- `ai seo article skill`：生成 SEO 文章封面图和配图
-- `open claw image generator skill`：OpenClaw + CyberBara 联动出图
+- **ai image generator skill**：社媒配图、广告素材、产品主视觉
+- **ai video generator skill**：短视频制作、分镜预演、创意样片
+- **ai ppt skill**：生成演示文稿配图与风格统一素材集
+- **ai seo article skill**：生成文章封面、插图与元数据图组
+- **open claw image generator skill**：OpenClaw + CyberBara 联动出图工作流
 
 工作流模板：
 
 - [AI PPT Workflow](./workflows/ai-ppt-skill.md)
 - [AI SEO Article Workflow](./workflows/ai-seo-article-skill.md)
 - [AI Comic Drama Workflow](./workflows/ai-comic-drama-skill.md)
+
+精选提示词：
+
 - [Curated Prompt Library](./workflows/curated-prompts.md)
+
+---
+
+## 模型覆盖（Model Coverage）
+
+CyberBara 当前支持的图像与视频模型：
+
+| 媒体类型 | 模型 | 支持场景 |
+| -------- | ---- | -------- |
+| Image | `nano-banana-2` | `text-to-image`, `image-to-image` |
+| Image | `nano-banana-pro` | `text-to-image`, `image-to-image` |
+| Video | `sora-2` | `text-to-video`, `image-to-video` |
+| Video | `sora-2-pro` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-pro` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-lite` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-pro-fast` | `image-to-video` |
+| Video | `kling-2.6` | `text-to-video`, `image-to-video` |
+| Video | `veo-3.1-fast` | `text-to-video`, `image-to-video` |
+| Video | `veo-3.1-quality` | `text-to-video`, `image-to-video` |
+| Video | `kling-video-o1` | `video-to-video` |
+
+具体和最新积分费用请访问：https://cyberbara.com/credit-costs
+
+---
+
+## 核心命令（CLI）
+
+```bash
+python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
+python3 scripts/cyberbara_api.py models --media-type image
+python3 scripts/cyberbara_api.py models --media-type video
+python3 scripts/cyberbara_api.py quote --json '{...}'
+python3 scripts/cyberbara_api.py generate-image --json '{...}'
+python3 scripts/cyberbara_api.py generate-video --json '{...}'
+python3 scripts/cyberbara_api.py wait --task-id <TASK_ID> --interval 5 --timeout 900
+python3 scripts/cyberbara_api.py balance
+python3 scripts/cyberbara_api.py usage --limit 20
+```
 
 ---
 
 ## 欢迎贡献
 
-欢迎提交 Issue 和 Pull Request，一起完善提示词库、工作流模板、文档和多平台适配能力，让这个项目越来越好。
+欢迎提交 Issue 和 Pull Request，一起完善提示词库、工作流模板、文档和平台适配能力。
 
-如果这个项目对你有帮助，也欢迎点一个 Star 支持。
+如果这个项目对你有帮助，欢迎点个 Star 支持。
 
 ---
 
 ## 许可证
 
 本项目采用 MIT 协议，详见 [LICENSE](./LICENSE)。
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ZeroLu/Ultimate-AI-Media-Generator-Skill&type=Date)](https://star-history.com/#ZeroLu/Ultimate-AI-Media-Generator-Skill&Date)

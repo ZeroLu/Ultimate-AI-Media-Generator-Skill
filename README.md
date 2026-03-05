@@ -1,29 +1,56 @@
+
 # Ultimate-AI-Media-Generator-Skill
 
-An open-source **ai image generator skill** and **ai video generator skill** for AI agents.
+[![GitHub Repo stars](https://img.shields.io/github/stars/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/network/members)
+[![MIT License](https://img.shields.io/github/license/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](./LICENSE)
 
-This skill is built around CyberBara Public API v1 and is designed for fast creation, predictable credit usage, and practical production workflows.
+![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
 
-[Quick Start](#quick-start) | [Key Features](#key-features) | [Platform Prompts](#step-3-use-the-skill-on-codex-claude-code-openclaw-and-claude-cowork) | [Use Cases](#typical-use-cases) | [Chinese README](./README-zh.md)
+An open-source **ai image generator skill** and **ai video generator skill** for AI agents. Empower your agent to generate images and videos on their own! Top models like Nano Banana 2, Sora 2, Seedance, Kling and much more are all supported!
+
+[Quick Start](#quick-start) | [Key Features](#key-features) | [Supported Platforms](#supported-platforms) | [Platform Prompts](#step-3-use-the-skill-on-codex-claude-code-openclaw-claude-cowork-cursor-and-antigravity) | [Use Cases](#typical-use-cases) | [Chinese README](./README-zh.md)
 
 ---
 
 ## Key Features
 
-- Lower-cost generation with CyberBara: in many scenarios, CyberBara pricing is cheaper than official model APIs.
-- Credit visibility before submission: quote credits first, then decide whether to continue.
-- Curated prompt library: includes production-ready prompts selected and refined by artists and prompt engineers, so beginners can create strong outputs without deep prompt engineering.
-- Built-in workflow templates: includes starter workflows for **ai ppt skill**, **ai seo article skill**, and AI comic drama creation.
-- Fully open source: fork, edit, and iterate the skill for your own team or product.
-- Multi-agent compatibility: works with OpenClaw, Claude Code, Codex, and Claude Cowork.
+- 🚀 **Cost-efficient generation**: in many scenarios, CyberBara pricing is lower than official model APIs.
+- 💳 **Credit visibility before submission**: quote credits first, then decide whether to continue.
+- 🧠 **Curated prompt library**: production-ready prompts selected and refined by artists and prompt engineers.
+- 🛠️ **Built-in workflow templates**: starter workflows for **ai ppt skill**, **ai seo article skill**, and AI comic drama production.
+- 🔓 **Fully open source**: fork, customize, and iterate for your own team or product.
+- 🌍 **Multi-agent compatibility**: supports mainstream skill-enabled AI coding platforms.
+
+---
+
+## Supported Platforms
+
+This skill supports all platforms that support skills, including but not limited to:
+
+- OpenClaw
+- Claude Code
+- Codex
+- Claude Cowork
+- Cursor
+- Antigravity
+- Other compatible skill-enabled agent platforms
 
 ---
 
 ## Quick Start
 
-### Step 1) Install (npx skills)
+### Vibe Install
 
-Based on the same installation pattern used in `Generative-Media-Skills`:
+Just send the following command to your AI(OpenClaw, Claude Code, Codex etc)
+
+```text
+Help me install this skill, use command `npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all`
+```
+
+### Manual Install
+
+### Step 1) Install (npx skills)
 
 ```bash
 # List what can be installed from this repo
@@ -36,21 +63,10 @@ npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all
 npx skills add ZeroLu/Ultimate-AI-Media-Generator-Skill --all -a codex -a claude-code
 ```
 
-Fallback (manual installer):
-
-```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo ZeroLu/Ultimate-AI-Media-Generator-Skill \
-  --path .
-```
-
-After installation, restart your AI coding agent.
 
 ### Step 2) Get and configure API key
 
-Get your API key:
-
-- https://cyberbara.com/settings/apikeys
+Get your free API key here: https://cyberbara.com/settings/apikeys
 
 Configure it once (recommended):
 
@@ -60,26 +76,9 @@ python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 
 This stores your key at `~/.config/cyberbara/api_key`, so you do not need to export it every session.
 
-Or save from environment:
+### Step 3) Use the skill on Codex, Claude Code, OpenClaw, Claude Cowork, Cursor, and Antigravity
 
-```bash
-export CYBERBARA_API_KEY="<your_api_key>"
-python3 scripts/cyberbara_api.py setup-api-key --from-env
-```
-
-API key resolution order:
-1. `--api-key`
-2. `CYBERBARA_API_KEY`
-3. `~/.config/cyberbara/api_key`
-4. interactive prompt
-
-### Step 3) Use the skill on Codex, Claude Code, OpenClaw, and Claude Cowork
-
-Use the skill trigger:
-
-- `$ultimate-ai-media-generator-skill`
-
-You can paste these prompts directly in your agent chat.
+You can paste these prompts directly in your agent chat, or just tell your agent to generate images and videos.
 
 #### A) Create an image (nano banana skill)
 
@@ -146,8 +145,23 @@ Curated prompts:
 
 ## Model Coverage
 
-- Image: `nano-banana-2`, `nano-banana-pro` (nano banana skill workflows)
-- Video: `seedance` family (seedance 2.0 skill workflows), `sora-2` (sora 2 skill workflows), and other CyberBara-supported models
+CyberBara supported image and video models:
+
+| Media Type | Model | Supported Scenes |
+| ---------- | ----- | ---------------- |
+| Image | `nano-banana-2` | `text-to-image`, `image-to-image` |
+| Image | `nano-banana-pro` | `text-to-image`, `image-to-image` |
+| Video | `sora-2` | `text-to-video`, `image-to-video` |
+| Video | `sora-2-pro` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-pro` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-lite` | `text-to-video`, `image-to-video` |
+| Video | `seedance-1-pro-fast` | `image-to-video` |
+| Video | `kling-2.6` | `text-to-video`, `image-to-video` |
+| Video | `veo-3.1-fast` | `text-to-video`, `image-to-video` |
+| Video | `veo-3.1-quality` | `text-to-video`, `image-to-video` |
+| Video | `kling-video-o1` | `video-to-video` |
+
+For detailed and latest credit pricing by model, visit https://cyberbara.com/credit-costs.
 
 ---
 
@@ -167,21 +181,6 @@ python3 scripts/cyberbara_api.py usage --limit 20
 
 ---
 
-## SEO Keyword Focus
-
-This repository is optimized for:
-
-- `ai image generator skill`
-- `ai video generator skill`
-- `ai ppt skill`
-- `nano banana skill`
-- `seedance 2.0 skill`
-- `sora 2 skill`
-- `ai seo article skill`
-- `open claw image generator skill`
-
----
-
 ## Contributing
 
 Contributions are welcome. Please open an issue for bugs/feature ideas, and submit pull requests to improve prompts, workflows, docs, or platform integrations.
@@ -193,3 +192,9 @@ If this project helps you, please star the repository and help make it better to
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE).
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ZeroLu/Ultimate-AI-Media-Generator-Skill&type=Date)](https://star-history.com/#ZeroLu/Ultimate-AI-Media-Generator-Skill&Date)
