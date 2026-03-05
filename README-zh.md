@@ -2,6 +2,9 @@
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/network/members)
+[![MIT License](https://img.shields.io/github/license/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](./LICENSE)
+
+![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
 
 一个开源的 **ai image generator skill** 与 **ai video generator skill**，为 AI Agent 提供一站式图像/视频生成能力。支持 Nano Banana 2、Sora 2、Seedance、Kling 等模型，适合内容生产、创意设计与自动化工作流。
 
@@ -188,7 +191,7 @@ python3 scripts/cyberbara_api.py usage --limit 20
 
 ## 许可证
 
-本项目采用 MIT 协议。
+本项目采用 MIT 协议，详见 [LICENSE](./LICENSE)。
 
 ---
 

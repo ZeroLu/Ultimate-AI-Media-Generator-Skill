@@ -3,6 +3,9 @@
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/network/members)
+[![MIT License](https://img.shields.io/github/license/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](./LICENSE)
+
+![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
 
 An open-source **ai image generator skill** and **ai video generator skill** for AI agents. Empower your agent to generate images and videos on their own! Top models like Nano Banana 2, Sora 2, Seedance, Kling and much more are all supported!
 
@@ -188,7 +191,7 @@ If this project helps you, please star the repository and help make it better to
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).
 
 ---
 
