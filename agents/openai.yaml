@@ -1,4 +1,4 @@
 interface:
   display_name: "Ultimate-AI-Media-Generator-Skill"
-  short_description: "Create and poll CyberBara image/video generation tasks with credit-aware flow"
+  short_description: "Create and poll CyberBara image, video, audio, and music generation tasks with credit-aware flow"
   default_prompt: "Use $ultimate-ai-media-generator-skill to create a CyberBara generation task and return final media URLs."

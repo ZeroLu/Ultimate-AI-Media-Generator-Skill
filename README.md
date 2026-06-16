@@ -7,7 +7,7 @@
 
 ![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
 
-An open-source **ai image generator skill** and **ai video generator skill** for AI agents. Empower your agent to generate images and videos on their own! Top models like Nano Banana 2, Sora 2, Seedance, Kling and much more are all supported!
+An open-source **ai image generator skill**, **ai video generator skill**, and **ai audio generator skill** for AI agents. Empower your agent to generate images, videos, sound effects, and music on their own. Top models like Nano Banana 2, Sora 2, Seedance, Kling, HappyHorse, and Suno are supported.
 
 [Quick Start](#quick-start) | [Key Features](#key-features) | [Supported Platforms](#supported-platforms) | [Platform Prompts](#step-3-use-the-skill-on-codex-claude-code-openclaw-claude-cowork-cursor-and-antigravity) | [Use Cases](#typical-use-cases) | [Chinese README](./README-zh.md)
 
@@ -78,7 +78,7 @@ This stores your key at `~/.config/cyberbara/api_key`, so you do not need to exp
 
 ### Step 3) Use the skill on Codex, Claude Code, OpenClaw, Claude Cowork, Cursor, and Antigravity
 
-You can paste these prompts directly in your agent chat, or just tell your agent to generate images and videos.
+You can paste these prompts directly in your agent chat, or just tell your agent to generate images, videos, audio, or music.
 
 #### A) Create an image (nano banana skill)
 
@@ -95,11 +95,11 @@ Return task id, final status, and output image URL.
 
 ```text
 Use $ultimate-ai-media-generator-skill to generate one video:
-- model: seedance-2.0-pro
+- model: seedance-2-ark
 - scene: text-to-video
 - prompt: Cinematic wide shot of a futuristic city at sunrise, smooth drone motion
-- options: duration=10, resolution=standard
-If seedance-2.0-pro is unavailable, fallback to sora-2.
+- options: duration=10, resolution=720p
+If seedance-2-ark is unavailable, fallback to sora-2.
 Return task id and final video URL.
 ```
 
@@ -115,7 +115,29 @@ Use $ultimate-ai-media-generator-skill to quote credits before submission for th
 Return estimated_credits and can_afford.
 ```
 
-#### D) Check balance and recent usage
+#### D) Create a sound effect
+
+```text
+Use $ultimate-ai-media-generator-skill to generate one sound effect:
+- model: suno-sound-v5-5
+- scene: text-to-audio
+- prompt: A short cinematic whoosh with soft digital sparkle
+- options: loop=false
+Return task id, final status, and output audio URL.
+```
+
+#### E) Create music
+
+```text
+Use $ultimate-ai-media-generator-skill to generate one music track:
+- model: suno-music-v5
+- scene: text-to-music
+- prompt: Warm lo-fi study music with mellow keys
+- options: instrumental=true
+Return task id, final status, and output audio URL.
+```
+
+#### F) Check balance and recent usage
 
 ```text
 Use $ultimate-ai-media-generator-skill to check current credit balance and the latest 20 usage records.
@@ -127,6 +149,7 @@ Use $ultimate-ai-media-generator-skill to check current credit balance and the l
 
 - **ai image generator skill** for social posts, ad creatives, product hero images.
 - **ai video generator skill** for short promo clips and storyboard previsualization.
+- **ai audio generator skill** for sound effects and production-ready music tracks.
 - **ai ppt skill** workflow to generate slide visuals and style-consistent image sets.
 - **ai seo article skill** workflow to generate article covers, inline visuals, and metadata image sets.
 - **open claw image generator skill** setup for teams using OpenClaw + CyberBara in the same workflow.
@@ -145,20 +168,37 @@ Curated prompts:
 
 ## Model Coverage
 
-CyberBara supported image and video models:
+CyberBara supported image, video, audio, and music models:
 
 | Media Type | Model | Supported Scenes |
 | ---------- | ----- | ---------------- |
+| Audio | `suno-sound-v5` | `text-to-audio` |
+| Audio | `suno-sound-v5-5` | `text-to-audio` |
 | Image | `nano-banana-2` | `text-to-image`, `image-to-image` |
 | Image | `nano-banana-pro` | `text-to-image`, `image-to-image` |
+| Image | `gpt-image-2` | `text-to-image`, `image-to-image` |
+| Image | `midjourney-v7` | `text-to-image`, `image-to-image` |
+| Music | `suno-music-v3-5` | `text-to-music` |
+| Music | `suno-music-v4` | `text-to-music` |
+| Music | `suno-music-v4-5` | `text-to-music` |
+| Music | `suno-music-v4-5-plus` | `text-to-music` |
+| Music | `suno-music-v5` | `text-to-music` |
+| Music | `suno-music-v5-5` | `text-to-music` |
+| Video | `happyhorse-1.0` | `text-to-video` |
+| Video | `happyhorse-1.0-first-frame` | `image-to-video` |
+| Video | `happyhorse-1.0-reference` | `image-to-video` |
+| Video | `happyhorse-1.0-video-edit` | `video-to-video` |
 | Video | `sora-2` | `text-to-video`, `image-to-video` |
 | Video | `sora-2-pro` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-pro` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-lite` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-pro-fast` | `image-to-video` |
 | Video | `kling-2.6` | `text-to-video`, `image-to-video` |
+| Video | `kling-3.0` | `text-to-video`, `image-to-video` |
+| Video | `kling-3.0-motion-control` | `video-to-video` |
 | Video | `veo-3.1-fast` | `text-to-video`, `image-to-video` |
 | Video | `veo-3.1-quality` | `text-to-video`, `image-to-video` |
+| Video | `gemini-omni-video` | `text-to-video`, `image-to-video`, `video-to-video` |
 | Video | `kling-video-o1` | `video-to-video` |
 
 For detailed and latest credit pricing by model, visit https://cyberbara.com/credit-costs.
@@ -171,9 +211,15 @@ For detailed and latest credit pricing by model, visit https://cyberbara.com/cre
 python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 python3 scripts/cyberbara_api.py models --media-type image
 python3 scripts/cyberbara_api.py models --media-type video
+python3 scripts/cyberbara_api.py models --media-type audio
+python3 scripts/cyberbara_api.py models --media-type music
+python3 scripts/cyberbara_api.py upload-images ./reference.png
+python3 scripts/cyberbara_api.py upload-videos ./reference.mp4
 python3 scripts/cyberbara_api.py quote --json '{...}'
 python3 scripts/cyberbara_api.py generate-image --json '{...}'
 python3 scripts/cyberbara_api.py generate-video --json '{...}'
+python3 scripts/cyberbara_api.py generate-audio --json '{...}'
+python3 scripts/cyberbara_api.py generate-music --json '{...}'
 python3 scripts/cyberbara_api.py wait --task-id <TASK_ID> --interval 5 --timeout 900
 python3 scripts/cyberbara_api.py balance
 python3 scripts/cyberbara_api.py usage --limit 20

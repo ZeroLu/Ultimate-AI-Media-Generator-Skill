@@ -40,6 +40,10 @@ def generate_media_with_credit_guard(
             payload = client.generate_image(request_body, timeout=timeout)
         elif media_label == "video":
             payload = client.generate_video(request_body, timeout=timeout)
+        elif media_label == "audio":
+            payload = client.generate_audio(request_body, timeout=timeout)
+        elif media_label == "music":
+            payload = client.generate_music(request_body, timeout=timeout)
         else:
             raise SystemExit(f"Unsupported media label: {media_label}")
         generation_payloads.append(payload)
@@ -64,4 +68,3 @@ def generate_media_with_credit_guard(
             "items": items,
         }
     }
-

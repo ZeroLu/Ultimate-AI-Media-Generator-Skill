@@ -107,7 +107,7 @@ class CyberbaraClient:
         for file_path in file_paths:
             path = Path(file_path)
             if not path.is_file():
-                raise SystemExit(f"Image file not found: {path}")
+                raise SystemExit(f"File not found: {path}")
 
             mime = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
             filename = path.name.replace('"', "")
@@ -187,11 +187,37 @@ class CyberbaraClient:
             timeout=timeout,
         )
 
+    def generate_audio(self, payload: Any, *, timeout: int) -> Any:
+        return self.request(
+            method="POST",
+            path="/api/v1/audio/generations",
+            json_body=payload,
+            timeout=timeout,
+        )
+
+    def generate_music(self, payload: Any, *, timeout: int) -> Any:
+        return self.request(
+            method="POST",
+            path="/api/v1/music/generations",
+            json_body=payload,
+            timeout=timeout,
+        )
+
     def upload_images(self, files: list[str], *, timeout: int) -> Any:
         body, content_type = self._build_multipart_upload(files)
         return self.request(
             method="POST",
             path="/api/v1/uploads/images",
+            body=body,
+            content_type=content_type,
+            timeout=timeout,
+        )
+
+    def upload_videos(self, files: list[str], *, timeout: int) -> Any:
+        body, content_type = self._build_multipart_upload(files)
+        return self.request(
+            method="POST",
+            path="/api/v1/uploads/videos",
             body=body,
             content_type=content_type,
             timeout=timeout,

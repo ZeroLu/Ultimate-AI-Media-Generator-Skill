@@ -6,7 +6,7 @@
 
 ![Ultimate AI Media Generator Skill Cover](./assets/readme-cover-2k-16x9.jpg)
 
-一个开源的 **ai image generator skill** 与 **ai video generator skill**，为 AI Agent 提供一站式图像/视频生成能力。支持 Nano Banana 2、Sora 2、Seedance、Kling 等模型，适合内容生产、创意设计与自动化工作流。
+一个开源的 **ai image generator skill**、**ai video generator skill** 与 **ai audio generator skill**，为 AI Agent 提供一站式图像、视频、音效与音乐生成能力。支持 Nano Banana 2、Sora 2、Seedance、Kling、HappyHorse、Suno 等模型，适合内容生产、创意设计与自动化工作流。
 
 [快速开始](#快速开始) | [核心特性](#核心特性) | [支持平台](#支持平台) | [平台调用示例](#platform-prompts) | [典型场景](#典型场景) | [English README](./README.md)
 
@@ -78,7 +78,7 @@ python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 
 ### Step 3) 在 Codex、Claude Code、OpenClaw、Claude Cowork、Cursor、Antigravity 中使用 skill
 
-你可以直接把下面提示词粘贴到 Agent 对话框，或直接让 Agent 帮你生图/生视频。
+你可以直接把下面提示词粘贴到 Agent 对话框，或直接让 Agent 帮你生图、生视频、生成音效或音乐。
 
 #### A) 生图示例（nano banana skill）
 
@@ -95,11 +95,11 @@ Return task id, final status, and output image URL.
 
 ```text
 Use $ultimate-ai-media-generator-skill to generate one video:
-- model: seedance-2.0-pro
+- model: seedance-2-ark
 - scene: text-to-video
 - prompt: Cinematic wide shot of a futuristic city at sunrise, smooth drone motion
-- options: duration=10, resolution=standard
-If seedance-2.0-pro is unavailable, fallback to sora-2.
+- options: duration=10, resolution=720p
+If seedance-2-ark is unavailable, fallback to sora-2.
 Return task id and final video URL.
 ```
 
@@ -115,7 +115,29 @@ Use $ultimate-ai-media-generator-skill to quote credits before submission for th
 Return estimated_credits and can_afford.
 ```
 
-#### D) 查询余额与最近使用记录
+#### D) 生成音效
+
+```text
+Use $ultimate-ai-media-generator-skill to generate one sound effect:
+- model: suno-sound-v5-5
+- scene: text-to-audio
+- prompt: A short cinematic whoosh with soft digital sparkle
+- options: loop=false
+Return task id, final status, and output audio URL.
+```
+
+#### E) 生成音乐
+
+```text
+Use $ultimate-ai-media-generator-skill to generate one music track:
+- model: suno-music-v5
+- scene: text-to-music
+- prompt: Warm lo-fi study music with mellow keys
+- options: instrumental=true
+Return task id, final status, and output audio URL.
+```
+
+#### F) 查询余额与最近使用记录
 
 ```text
 Use $ultimate-ai-media-generator-skill to check current credit balance and the latest 20 usage records.
@@ -127,6 +149,7 @@ Use $ultimate-ai-media-generator-skill to check current credit balance and the l
 
 - **ai image generator skill**：社媒配图、广告素材、产品主视觉
 - **ai video generator skill**：短视频制作、分镜预演、创意样片
+- **ai audio generator skill**：生成音效与可用于制作的音乐素材
 - **ai ppt skill**：生成演示文稿配图与风格统一素材集
 - **ai seo article skill**：生成文章封面、插图与元数据图组
 - **open claw image generator skill**：OpenClaw + CyberBara 联动出图工作流
@@ -145,20 +168,37 @@ Use $ultimate-ai-media-generator-skill to check current credit balance and the l
 
 ## 模型覆盖（Model Coverage）
 
-CyberBara 当前支持的图像与视频模型：
+CyberBara 当前支持的图像、视频、音频与音乐模型：
 
 | 媒体类型 | 模型 | 支持场景 |
 | -------- | ---- | -------- |
+| Audio | `suno-sound-v5` | `text-to-audio` |
+| Audio | `suno-sound-v5-5` | `text-to-audio` |
 | Image | `nano-banana-2` | `text-to-image`, `image-to-image` |
 | Image | `nano-banana-pro` | `text-to-image`, `image-to-image` |
+| Image | `gpt-image-2` | `text-to-image`, `image-to-image` |
+| Image | `midjourney-v7` | `text-to-image`, `image-to-image` |
+| Music | `suno-music-v3-5` | `text-to-music` |
+| Music | `suno-music-v4` | `text-to-music` |
+| Music | `suno-music-v4-5` | `text-to-music` |
+| Music | `suno-music-v4-5-plus` | `text-to-music` |
+| Music | `suno-music-v5` | `text-to-music` |
+| Music | `suno-music-v5-5` | `text-to-music` |
+| Video | `happyhorse-1.0` | `text-to-video` |
+| Video | `happyhorse-1.0-first-frame` | `image-to-video` |
+| Video | `happyhorse-1.0-reference` | `image-to-video` |
+| Video | `happyhorse-1.0-video-edit` | `video-to-video` |
 | Video | `sora-2` | `text-to-video`, `image-to-video` |
 | Video | `sora-2-pro` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-pro` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-lite` | `text-to-video`, `image-to-video` |
 | Video | `seedance-1-pro-fast` | `image-to-video` |
 | Video | `kling-2.6` | `text-to-video`, `image-to-video` |
+| Video | `kling-3.0` | `text-to-video`, `image-to-video` |
+| Video | `kling-3.0-motion-control` | `video-to-video` |
 | Video | `veo-3.1-fast` | `text-to-video`, `image-to-video` |
 | Video | `veo-3.1-quality` | `text-to-video`, `image-to-video` |
+| Video | `gemini-omni-video` | `text-to-video`, `image-to-video`, `video-to-video` |
 | Video | `kling-video-o1` | `video-to-video` |
 
 具体和最新积分费用请访问：https://cyberbara.com/credit-costs
@@ -171,9 +211,15 @@ CyberBara 当前支持的图像与视频模型：
 python3 scripts/cyberbara_api.py setup-api-key "<your_api_key>"
 python3 scripts/cyberbara_api.py models --media-type image
 python3 scripts/cyberbara_api.py models --media-type video
+python3 scripts/cyberbara_api.py models --media-type audio
+python3 scripts/cyberbara_api.py models --media-type music
+python3 scripts/cyberbara_api.py upload-images ./reference.png
+python3 scripts/cyberbara_api.py upload-videos ./reference.mp4
 python3 scripts/cyberbara_api.py quote --json '{...}'
 python3 scripts/cyberbara_api.py generate-image --json '{...}'
 python3 scripts/cyberbara_api.py generate-video --json '{...}'
+python3 scripts/cyberbara_api.py generate-audio --json '{...}'
+python3 scripts/cyberbara_api.py generate-music --json '{...}'
 python3 scripts/cyberbara_api.py wait --task-id <TASK_ID> --interval 5 --timeout 900
 python3 scripts/cyberbara_api.py balance
 python3 scripts/cyberbara_api.py usage --limit 20

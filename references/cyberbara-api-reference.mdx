@@ -20,16 +20,16 @@ Provider details are intentionally hidden from clients.
 
 ## Base URL
 
-Use your own deployed domain.
+Use the production Cyberbara API base URL.
 
 ```text
-https://<your-domain>
+https://cyberbara.com
 ```
 
 Example:
 
 ```text
-https://cyberbara-preview.iamzerolu.workers.dev
+https://cyberbara.com
 ```
 
 ## Authentication
@@ -76,12 +76,12 @@ Error:
 
 Optional query:
 
-- `media_type=image|video`
+- `media_type=image|video|audio|music`
 
 Example:
 
 ```bash
-curl -X GET 'https://<your-domain>/api/v1/models?media_type=video' \
+curl -X GET 'https://cyberbara.com/api/v1/models?media_type=video' \
   -H 'Authorization: Bearer <API_KEY>'
 ```
 
@@ -100,9 +100,19 @@ Response example:
         "model": "kling-2.6",
         "media_type": "video",
         "supported_scenes": ["text-to-video", "image-to-video"]
+      },
+      {
+        "model": "kling-3.0",
+        "media_type": "video",
+        "supported_scenes": ["text-to-video", "image-to-video"]
+      },
+      {
+        "model": "kling-3.0-motion-control",
+        "media_type": "video",
+        "supported_scenes": ["video-to-video"]
       }
     ],
-    "total": 2
+    "total": 4
   }
 }
 ```
@@ -113,7 +123,7 @@ Error example (`invalid_media_type`):
 {
   "error": {
     "code": "invalid_media_type",
-    "message": "media_type must be \"image\" or \"video\"."
+    "message": "media_type must be \"image\", \"video\", \"audio\", or \"music\"."
   }
 }
 ```
@@ -135,7 +145,7 @@ Request:
 Example:
 
 ```bash
-curl -X POST 'https://<your-domain>/api/v1/uploads/images' \
+curl -X POST 'https://cyberbara.com/api/v1/uploads/images' \
   -H 'Authorization: Bearer <API_KEY>' \
   -F 'files=@./reference.png'
 ```
@@ -157,6 +167,49 @@ Response example:
     ],
     "urls": [
       "https://cdn.example.com/uploads/api/v1/uploads/3e7e48e6/7f2f25f8d6c26f11b2a5bb6b3f7f4a28.png"
+    ],
+    "count": 1
+  }
+}
+```
+
+### `POST /api/v1/uploads/videos`
+
+Upload a reference video, then use returned URLs in `options.video_input` (or `options.video_url` for `seedance-2-watermark-remover`).
+
+Request:
+
+- `Content-Type: multipart/form-data`
+- field name: `files` (or `file` for single upload)
+- max files per request: `1`
+- max file size: `50MB`
+- supported mime types: `video/mp4`, `video/quicktime`
+
+Example:
+
+```bash
+curl -X POST 'https://cyberbara.com/api/v1/uploads/videos' \
+  -H 'Authorization: Bearer <API_KEY>' \
+  -F 'files=@./reference.mp4'
+```
+
+Response example:
+
+```json
+{
+  "data": {
+    "files": [
+      {
+        "url": "https://cdn.example.com/uploads/api/v1/uploads/3e7e48e6/2d9b18f0b5a0a9b4c65b7f6c3b2f7c32.mp4",
+        "key": "api/v1/uploads/3e7e48e6/2d9b18f0b5a0a9b4c65b7f6c3b2f7c32.mp4",
+        "filename": "reference.mp4",
+        "content_type": "video/mp4",
+        "size": 1245123,
+        "deduped": false
+      }
+    ],
+    "urls": [
+      "https://cdn.example.com/uploads/api/v1/uploads/3e7e48e6/2d9b18f0b5a0a9b4c65b7f6c3b2f7c32.mp4"
     ],
     "count": 1
   }
@@ -198,7 +251,7 @@ Then use upload URL for image-to-image:
 Returns current credits balance.
 
 ```bash
-curl -X GET 'https://<your-domain>/api/v1/credits/balance' \
+curl -X GET 'https://cyberbara.com/api/v1/credits/balance' \
   -H 'Authorization: Bearer <API_KEY>'
 ```
 
@@ -232,12 +285,12 @@ Estimate credits before creating a task.
 Request body:
 
 - `model` required
-- `media_type` optional if model can infer it
+- `media_type` optional if model can infer it (`image`, `video`, `audio`, or `music`)
 - `scene` optional but recommended
 - `options` optional
 
 ```bash
-curl -X POST 'https://<your-domain>/api/v1/credits/quote' \
+curl -X POST 'https://cyberbara.com/api/v1/credits/quote' \
   -H 'Authorization: Bearer <API_KEY>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -287,7 +340,7 @@ Query params:
 - Date-only values are interpreted in UTC (`from` -> `00:00:00.000Z`, `to` -> `23:59:59.999Z`)
 
 ```bash
-curl -X GET 'https://<your-domain>/api/v1/credits/usage?page=1&limit=20&from=2026-03-01&to=2026-03-03' \
+curl -X GET 'https://cyberbara.com/api/v1/credits/usage?page=1&limit=20&from=2026-03-01&to=2026-03-03' \
   -H 'Authorization: Bearer <API_KEY>'
 ```
 
@@ -355,7 +408,7 @@ Request body:
 - `options` optional
 
 ```bash
-curl -X POST 'https://<your-domain>/api/v1/images/generations' \
+curl -X POST 'https://cyberbara.com/api/v1/images/generations' \
   -H 'Authorization: Bearer <API_KEY>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -401,13 +454,13 @@ Error example (`insufficient_credits`):
 Request body:
 
 - `model` required
-- `prompt` required for most video models (including `seedance-*`, `kling-2.6`, `veo-*`)
+- `prompt` required for most video models (including `seedance-*`, `kling-2.6`, `kling-3.0`, `veo-*`)
 - `prompt` optional for `sora-2-pro` at API validation layer, but still recommended
 - `scene` optional (`text-to-video` / `image-to-video` / `video-to-video`)
 - `options` optional
 
 ```bash
-curl -X POST 'https://<your-domain>/api/v1/videos/generations' \
+curl -X POST 'https://cyberbara.com/api/v1/videos/generations' \
   -H 'Authorization: Bearer <API_KEY>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -433,6 +486,88 @@ Response example:
       "remaining": 16
     },
     "created_at": "2026-03-03T04:31:55.116Z"
+  }
+}
+```
+
+### `POST /api/v1/audio/generations`
+
+Alias: `POST /api/v1/audios/generations`
+
+Request body:
+
+- `model` required, for example `suno-sound-v5` or `suno-sound-v5-5`
+- `prompt` required
+- `scene` optional (`text-to-audio`)
+- `options` optional
+
+```bash
+curl -X POST 'https://cyberbara.com/api/v1/audio/generations' \
+  -H 'Authorization: Bearer <API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "suno-sound-v5-5",
+    "prompt": "A short cinematic whoosh with soft digital sparkle",
+    "scene": "text-to-audio",
+    "options": { "loop": false }
+  }'
+```
+
+Response example:
+
+```json
+{
+  "data": {
+    "task_id": "uuid",
+    "status": "pending",
+    "media_type": "audio",
+    "model": "suno-sound-v5-5",
+    "scene": "text-to-audio",
+    "credits": {
+      "cost": 6,
+      "remaining": 30
+    },
+    "created_at": "2026-03-03T04:35:22.104Z"
+  }
+}
+```
+
+### `POST /api/v1/music/generations`
+
+Request body:
+
+- `model` required, for example `suno-music-v5`
+- `prompt` required unless your `options` provide the full provider-specific custom-mode payload
+- `scene` optional (`text-to-music`)
+- `options` optional
+
+```bash
+curl -X POST 'https://cyberbara.com/api/v1/music/generations' \
+  -H 'Authorization: Bearer <API_KEY>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "suno-music-v5",
+    "prompt": "Warm lo-fi study music with mellow keys",
+    "scene": "text-to-music",
+    "options": { "instrumental": true }
+  }'
+```
+
+Response example:
+
+```json
+{
+  "data": {
+    "task_id": "uuid",
+    "status": "pending",
+    "media_type": "music",
+    "model": "suno-music-v5",
+    "scene": "text-to-music",
+    "credits": {
+      "cost": 10,
+      "remaining": 26
+    },
+    "created_at": "2026-03-03T04:36:10.219Z"
   }
 }
 ```
@@ -478,7 +613,7 @@ Shared option fields:
 
 Notes:
 
-- Public API accepts only `options.*` fields. Do not send provider-internal keys such as `video_url`, `image_url`, `image_urls`, `input_images`, or `imageUrls`.
+- Public API accepts only `options.*` fields. Do not send provider-internal keys such as `image_url`, `image_urls`, `input_images`, or `imageUrls` (except `options.video_url` for `seedance-2-watermark-remover`).
 - For all models below, if both `prompt` and `options` are empty, API returns `invalid_request`.
 - Some models strictly validate options; others forward options to the model endpoint with minimal/no validation.
 - Unknown options for strict-validated models are ignored; unknown options for pass-through models are forwarded.
@@ -512,94 +647,266 @@ Validation level: strict keys + light normalization.
 | `options.resolution`    | `string`   | No                            | normalized: `1K` / `2K` / `4K` | Inputs like `1k`, `2k`, `4k` are normalized; other strings are passed through |
 | `options.output_format` | `string`   | No                            | normalized: `jpg` / `png`      | `jpeg` becomes `jpg`; other strings are passed through                        |
 
+#### `midjourney-v7`
+
+Supported scenes: `text-to-image`, `image-to-image`.
+Validation level: pass-through with CyberBara-side normalization for aspect ratio and Midjourney helper fields.
+
+This model supports three Midjourney-style reference mechanisms in CyberBara:
+
+- `options.image_input`: used as `Image Prompts`
+- `options.style_reference_input`: used as `Style Reference`
+- `options.omni_reference_input`: used as `Omni Reference`
+
+Important behavior:
+
+- If you omit `scene` and send a non-empty `options.image_input`, CyberBara infers `image-to-image`.
+- If you want Midjourney-style text generation with prompt images, send `scene: "text-to-image"` explicitly.
+- `style_reference_input` and `omni_reference_input` do not change scene inference by themselves.
+- CyberBara currently uses the first image from `style_reference_input` and the first image from `omni_reference_input`.
+
+| Field                            | Type                 | Required                      | Allowed / Default | Notes                                                                                          |
+| -------------------------------- | -------------------- | ----------------------------- | ----------------- | ---------------------------------------------------------------------------------------------- |
+| `prompt`                         | `string`             | Yes                           | non-empty         | Main Midjourney prompt text                                                                    |
+| `options.image_input`            | `string[]`           | Required for `image-to-image` | URL array         | Used as Midjourney `Image Prompts`; can also be used in `text-to-image` if `scene` is explicit |
+| `options.image_weight`           | `string` or `number` | No                            | numeric >= `0`    | Mapped to Midjourney `--iw`; commonly used with `image_input`                                  |
+| `options.style_reference_input`  | `string[]`           | No                            | URL array         | First image is used as Midjourney `--sref`                                                     |
+| `options.style_reference_weight` | `string` or `number` | No                            | numeric >= `0`    | Mapped to Midjourney `--sw`                                                                    |
+| `options.omni_reference_input`   | `string[]`           | No                            | URL array         | First image is used as Midjourney `--oref`                                                     |
+| `options.omni_reference_weight`  | `string` or `number` | No                            | numeric >= `0`    | Mapped to Midjourney `--ow`                                                                    |
+| `options.aspect_ratio`           | `string`             | No                            | `1:1` default     | Mapped to Midjourney `--ar`; CyberBara normalizes invalid values to `1:1`                      |
+
+Practical usage:
+
+- Use `Image Prompts` when you want Midjourney to borrow subject identity, composition, palette, or mood from one or more images.
+- Use `Style Reference` when you want to transfer visual style without strongly locking the subject itself.
+- Use `Omni Reference` when you want a stronger object/character/product reference for Midjourney v7.
+
+Example: text-to-image with all three reference types
+
+```json
+{
+  "model": "midjourney-v7",
+  "scene": "text-to-image",
+  "prompt": "editorial fashion portrait, woman in silver armor, neon alley, full body, low angle, cinematic rim light, ultra detailed",
+  "options": {
+    "image_input": [
+      "https://cdn.example.com/uploads/api/v1/uploads/prompt-1.png",
+      "https://cdn.example.com/uploads/api/v1/uploads/prompt-2.png"
+    ],
+    "image_weight": 1.5,
+    "style_reference_input": [
+      "https://cdn.example.com/uploads/api/v1/uploads/style-reference.png"
+    ],
+    "style_reference_weight": 100,
+    "omni_reference_input": [
+      "https://cdn.example.com/uploads/api/v1/uploads/omni-reference.png"
+    ],
+    "omni_reference_weight": 100,
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+Example: image-to-image with prompt images only
+
+```json
+{
+  "model": "midjourney-v7",
+  "scene": "image-to-image",
+  "prompt": "keep the subject silhouette, make it more cinematic and high-fashion",
+  "options": {
+    "image_input": [
+      "https://cdn.example.com/uploads/api/v1/uploads/reference.png"
+    ],
+    "image_weight": 1.2,
+    "aspect_ratio": "3:4"
+  }
+}
+```
+
 ### Video Models
 
-Except `kling-video-o1`, models below do not support `video-to-video`, so `options.video_input` should not be sent.
+Except `kling-video-o1`, `kling-3.0-motion-control`, `seedance-2`, `seedance-2-fast`, `seedance-2-preview`, `seedance-2-fast-preview`, and `seedance-2-watermark-remover`, models below do not support `video-to-video`, so `options.video_input` should not be sent.
 
 #### `sora-2`
 
 Supported scenes: `text-to-video`, `image-to-video`.
 Validation level: strict.
 
-| Field                                   | Type                 | Required                      | Allowed / Default                              | Notes                       |
-| --------------------------------------- | -------------------- | ----------------------------- | ---------------------------------------------- | --------------------------- |
-| `prompt`                                | `string`             | Yes                           | non-empty                                      | Required for both scenes    |
-| `options.image_input`                   | `string[]`           | Required for `image-to-video` | URL array                                      | Used as image references    |
-| `options.aspect_ratio`                  | `string`             | No                            | `landscape` / `portrait` (default `landscape`) | Strictly validated          |
-| `options.duration` / `options.n_frames` | `string` or `number` | No                            | `10` / `15` (default `10`)                     | Strictly validated          |
-| `options.remove_watermark`              | `boolean`            | No                            | default `true`                                 | Strictly validated          |
-| `options.upload_method`                 | `string`             | No                            | `s3` / `oss` (default `s3`)                    | Strictly validated          |
+| Field                                   | Type                 | Required                      | Allowed / Default                              | Notes                    |
+| --------------------------------------- | -------------------- | ----------------------------- | ---------------------------------------------- | ------------------------ |
+| `prompt`                                | `string`             | Yes                           | non-empty                                      | Required for both scenes |
+| `options.image_input`                   | `string[]`           | Required for `image-to-video` | URL array                                      | Used as image references |
+| `options.aspect_ratio`                  | `string`             | No                            | `landscape` / `portrait` (default `landscape`) | Strictly validated       |
+| `options.duration` / `options.n_frames` | `string` or `number` | No                            | `10` / `15` (default `10`)                     | Strictly validated       |
+| `options.remove_watermark`              | `boolean`            | No                            | default `true`                                 | Strictly validated       |
+| `options.upload_method`                 | `string`             | No                            | `s3` / `oss` (default `s3`)                    | Strictly validated       |
 
 #### `sora-2-pro`
 
 Supported scenes: `text-to-video`, `image-to-video`.
 Validation level: strict.
 
-| Field                                   | Type                 | Required                      | Allowed / Default                              | Notes                       |
-| --------------------------------------- | -------------------- | ----------------------------- | ---------------------------------------------- | --------------------------- |
-| `prompt`                                | `string`             | No for API validation         | optional                                       | Recommended                 |
-| `options.image_input`                   | `string[]`           | Required for `image-to-video` | URL array                                      | Used as image references    |
-| `options.aspect_ratio`                  | `string`             | No                            | `landscape` / `portrait` (default `landscape`) | Strictly validated          |
-| `options.duration` / `options.n_frames` | `string` or `number` | No                            | `10` / `15` (default `10`)                     | Strictly validated          |
-| `options.resolution` / `options.size`   | `string`             | No                            | `standard` / `high` (default `standard`)       | Strictly validated          |
+| Field                                   | Type                 | Required                      | Allowed / Default                              | Notes                    |
+| --------------------------------------- | -------------------- | ----------------------------- | ---------------------------------------------- | ------------------------ |
+| `prompt`                                | `string`             | No for API validation         | optional                                       | Recommended              |
+| `options.image_input`                   | `string[]`           | Required for `image-to-video` | URL array                                      | Used as image references |
+| `options.aspect_ratio`                  | `string`             | No                            | `landscape` / `portrait` (default `landscape`) | Strictly validated       |
+| `options.duration` / `options.n_frames` | `string` or `number` | No                            | `10` / `15` (default `10`)                     | Strictly validated       |
+| `options.resolution` / `options.size`   | `string`             | No                            | `standard` / `high` (default `standard`)       | Strictly validated       |
+
+#### `seedance-2`
+
+Supported scenes: `text-to-video`, `image-to-video`, `video-to-video`.
+Validation level: strict.
+
+Notes:
+
+- This is the official Seedance 2 API route, separate from the preview models.
+- Billing for `video-to-video` uses `input video duration + output duration`.
+- `options.mode` can be passed directly, but CyberBara usually infers it from your scene and references.
+
+| Field                  | Type                 | Required                      | Allowed / Default                                                 | Notes                                                                 |
+| ---------------------- | -------------------- | ----------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `prompt`               | `string`             | Yes                           | non-empty                                                         | Required for all scenes                                               |
+| `options.image_input`  | `string[]`           | Required for `image-to-video` | URL array, shared reference max `12`                              | Used as first/last frames or omni references                          |
+| `options.video_input`  | `string[]`           | Required for `video-to-video` | single URL, total input video duration max `15.4s`                | Uses official omni-reference mode                                     |
+| `options.audio_input`  | `string[]`           | No                            | URL array, shared reference max `12`                              | Only valid for omni-reference flows; audio-only requests are rejected |
+| `options.duration`     | `string` or `number` | No                            | integer `4`-`15` (default `5`)                                    | For `video-to-video`, this is the output duration                     |
+| `options.aspect_ratio` | `string`             | No                            | `21:9` / `16:9` / `4:3` / `1:1` / `3:4` / `9:16` (default `16:9`) | Ignored in first/last-frame mode when source images determine framing |
+| `options.mode`         | `string`             | No                            | `text_to_video` / `first_last_frames` / `omni_reference`          | Optional explicit override                                            |
+
+#### `seedance-2-fast`
+
+Supported scenes: `text-to-video`, `image-to-video`, `video-to-video`.
+Validation level: strict.
+
+Fields are the same as `seedance-2`.
+
+#### `seedance-2-preview`
+
+Supported scenes: `text-to-video`, `image-to-video`, `video-to-video`.
+Validation level: strict.
+
+Notes:
+
+- This is the legacy preview API route.
+- Preview pricing and parameter behavior are different from the official `seedance-2` / `seedance-2-fast` models.
+
+| Field                    | Type                 | Required                          | Allowed / Default                                | Notes                                                                                      |
+| ------------------------ | -------------------- | --------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `prompt`                 | `string`             | Yes                               | non-empty                                        | Required for all scenes                                                                    |
+| `options.image_input`    | `string[]`           | Required for `image-to-video`     | URL array (max 9)                                | Used as image references in prompt (`@image1`, `@image2`, ...).                            |
+| `options.video_input`    | `string[]`           | Required for `video-to-video`     | single URL                                       | Seedance 2.0 video edit mode. Exactly one URL.                                             |
+| `options.duration`       | `string` or `number` | No (ignored for `video-to-video`) | `5` / `10` / `15` (default `5`)                  | For video edit, output length equals input video length.                                   |
+| `options.aspect_ratio`   | `string`             | No                                | `16:9` / `9:16` / `4:3` / `3:4` (default `16:9`) | Aspect ratio is best-effort; image aspect ratio may override it.                           |
+| `options.parent_task_id` | `string`             | No                                | task id                                          | Extend from a previous Seedance 2.0 task; missing fields may be inherited from the parent. |
+
+#### `seedance-2-fast-preview`
+
+Supported scenes: `text-to-video`, `image-to-video`, `video-to-video`.
+Validation level: strict.
+
+Fields are the same as `seedance-2-preview`.
+
+#### `seedance-2-watermark-remover`
+
+Supported scenes: `video-to-video`.
+Validation level: strict.
+
+| Field                 | Type                 | Required | Allowed / Default | Notes                                                                 |
+| --------------------- | -------------------- | -------- | ----------------- | --------------------------------------------------------------------- |
+| `prompt`              | `string`             | No       | optional          | Not used by the watermark remover                                     |
+| `options.video_input` | `string[]`           | Yes      | single URL        | Video URL to process                                                  |
+| `options.video_url`   | `string`             | Yes      | single URL        | Alternative to `options.video_input`                                  |
+| `options.duration`    | `string` or `number` | No       | auto-detected     | Optional hint; if omitted, duration is auto-detected by the processor |
 
 #### `seedance-1-pro`
 
 Supported scenes: `text-to-video`, `image-to-video`.
 Validation level: strict + partial pass-through for some strings.
 
-| Field                            | Type                 | Required                          | Allowed / Default    | Notes                                                                              |
-| -------------------------------- | -------------------- | --------------------------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| `prompt`                         | `string`             | Yes                               | non-empty            | Required for both scenes                                                           |
-| `options.image_input`            | `string[]`           | Required for `image-to-video`     | first image URL used | `image-to-video` requires at least one image                                       |
-| `options.resolution`             | `string`             | No                                | default `720p`       | Recommended: `480p`, `720p`, `1080p`                                               |
-| `options.duration`               | `string` or `number` | No                                | default `5`          | Recommended: `5`, `10`                                                             |
-| `options.aspect_ratio`           | `string`             | No                                | default `16:9`       | Used for `text-to-video`; `image-to-video` ignores this field                      |
-| `options.camera_fixed`           | `boolean`            | No                                | default unset        | Supported                                                                          |
-| `options.seed` / `options.seeds` | `integer`            | No                                | `-1` to `2147483647` | Strict range check                                                                 |
-| `options.enable_safety_checker`  | `boolean`            | No                                | default unset        | Supported                                                                          |
+| Field                            | Type                 | Required                      | Allowed / Default    | Notes                                                         |
+| -------------------------------- | -------------------- | ----------------------------- | -------------------- | ------------------------------------------------------------- |
+| `prompt`                         | `string`             | Yes                           | non-empty            | Required for both scenes                                      |
+| `options.image_input`            | `string[]`           | Required for `image-to-video` | first image URL used | `image-to-video` requires at least one image                  |
+| `options.resolution`             | `string`             | No                            | default `720p`       | Recommended: `480p`, `720p`, `1080p`                          |
+| `options.duration`               | `string` or `number` | No                            | default `5`          | Recommended: `5`, `10`                                        |
+| `options.aspect_ratio`           | `string`             | No                            | default `16:9`       | Used for `text-to-video`; `image-to-video` ignores this field |
+| `options.camera_fixed`           | `boolean`            | No                            | default unset        | Supported                                                     |
+| `options.seed` / `options.seeds` | `integer`            | No                            | `-1` to `2147483647` | Strict range check                                            |
+| `options.enable_safety_checker`  | `boolean`            | No                            | default unset        | Supported                                                     |
 
 #### `seedance-1-lite`
 
 Supported scenes: `text-to-video`, `image-to-video`.
 Validation level: strict + partial pass-through for some strings.
 
-| Field                            | Type                 | Required                          | Allowed / Default    | Notes                                                                              |
-| -------------------------------- | -------------------- | --------------------------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| `prompt`                         | `string`             | Yes                               | non-empty            | Required for both scenes                                                           |
-| `options.image_input`            | `string[]`           | Required for `image-to-video`     | first image URL used | If second image is provided, it is auto-used as `end_image_url`                    |
-| `options.resolution`             | `string`             | No                                | default `720p`       | Recommended: `480p`, `720p`, `1080p`                                               |
-| `options.duration`               | `string` or `number` | No                                | default `5`          | Recommended: `5`, `10`                                                             |
-| `options.aspect_ratio`           | `string`             | No                                | default `16:9`       | Used for `text-to-video`; `image-to-video` ignores this field                      |
-| `options.camera_fixed`           | `boolean`            | No                                | default unset        | Supported                                                                          |
-| `options.seed` / `options.seeds` | `integer`            | No                                | `-1` to `2147483647` | Strict range check                                                                 |
-| `options.enable_safety_checker`  | `boolean`            | No                                | default unset        | Supported for `text-to-video` only                                                 |
-| `options.end_image_url`          | `string`             | No                                | URL                  | Supported for `image-to-video`                                                     |
+| Field                            | Type                 | Required                      | Allowed / Default    | Notes                                                           |
+| -------------------------------- | -------------------- | ----------------------------- | -------------------- | --------------------------------------------------------------- |
+| `prompt`                         | `string`             | Yes                           | non-empty            | Required for both scenes                                        |
+| `options.image_input`            | `string[]`           | Required for `image-to-video` | first image URL used | If second image is provided, it is auto-used as `end_image_url` |
+| `options.resolution`             | `string`             | No                            | default `720p`       | Recommended: `480p`, `720p`, `1080p`                            |
+| `options.duration`               | `string` or `number` | No                            | default `5`          | Recommended: `5`, `10`                                          |
+| `options.aspect_ratio`           | `string`             | No                            | default `16:9`       | Used for `text-to-video`; `image-to-video` ignores this field   |
+| `options.camera_fixed`           | `boolean`            | No                            | default unset        | Supported                                                       |
+| `options.seed` / `options.seeds` | `integer`            | No                            | `-1` to `2147483647` | Strict range check                                              |
+| `options.enable_safety_checker`  | `boolean`            | No                            | default unset        | Supported for `text-to-video` only                              |
+| `options.end_image_url`          | `string`             | No                            | URL                  | Supported for `image-to-video`                                  |
 
 #### `seedance-1-pro-fast`
 
 Supported scenes: `image-to-video`.
 Validation level: strict + partial pass-through for some strings.
 
-| Field                            | Type                 | Required | Allowed / Default    | Notes                        |
-| -------------------------------- | -------------------- | -------- | -------------------- | ---------------------------- |
-| `prompt`                         | `string`             | Yes      | non-empty            | Required                     |
-| `options.image_input`            | `string[]`           | Yes      | first image URL used | Required                     |
-| `options.resolution`             | `string`             | No       | default `720p`       | Recommended: `720p`, `1080p` |
-| `options.duration`               | `string` or `number` | No       | default `5`          | Recommended: `5`, `10`       |
+| Field                 | Type                 | Required | Allowed / Default    | Notes                        |
+| --------------------- | -------------------- | -------- | -------------------- | ---------------------------- |
+| `prompt`              | `string`             | Yes      | non-empty            | Required                     |
+| `options.image_input` | `string[]`           | Yes      | first image URL used | Required                     |
+| `options.resolution`  | `string`             | No       | default `720p`       | Recommended: `720p`, `1080p` |
+| `options.duration`    | `string` or `number` | No       | default `5`          | Recommended: `5`, `10`       |
 
 #### `kling-2.6`
 
 Supported scenes: `text-to-video`, `image-to-video`.
 Validation level: strict.
 
-| Field                  | Type                 | Required                          | Allowed / Default                        | Notes                                                                               |
-| ---------------------- | -------------------- | --------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| `prompt`               | `string`             | Yes                               | non-empty                                | Required for both scenes                                                            |
-| `options.image_input`  | `string[]`           | Required for `image-to-video`     | URL array                                | `image-to-video` requires at least one image                                        |
-| `options.duration`     | `string` or `number` | No                                | `5` / `10` (default `5`)                 | Strictly validated                                                                  |
-| `options.sound`        | `boolean`            | No                                | default `false`                          | Strictly validated                                                                  |
-| `options.aspect_ratio` | `string`             | No                                | `1:1` / `16:9` / `9:16` (default `16:9`) | Used for `text-to-video`; `image-to-video` ignores this field                       |
+| Field                  | Type                 | Required                      | Allowed / Default                        | Notes                                                         |
+| ---------------------- | -------------------- | ----------------------------- | ---------------------------------------- | ------------------------------------------------------------- |
+| `prompt`               | `string`             | Yes                           | non-empty                                | Required for both scenes                                      |
+| `options.image_input`  | `string[]`           | Required for `image-to-video` | URL array                                | `image-to-video` requires at least one image                  |
+| `options.duration`     | `string` or `number` | No                            | `5` / `10` (default `5`)                 | Strictly validated                                            |
+| `options.sound`        | `boolean`            | No                            | default `false`                          | Strictly validated                                            |
+| `options.aspect_ratio` | `string`             | No                            | `1:1` / `16:9` / `9:16` (default `16:9`) | Used for `text-to-video`; `image-to-video` ignores this field |
+
+#### `kling-3.0`
+
+Supported scenes: `text-to-video`, `image-to-video`.
+Validation level: strict.
+
+| Field                  | Type                 | Required | Allowed / Default                        | Notes                                                             |
+| ---------------------- | -------------------- | -------- | ---------------------------------------- | ----------------------------------------------------------------- |
+| `prompt`               | `string`             | Yes      | non-empty                                | Required for both scenes                                          |
+| `options.image_input`  | `string[]`           | No       | URL array                                | If present, routes to `image-to-video`; otherwise `text-to-video` |
+| `options.duration`     | `string` or `number` | No       | integer `3`-`15` (default `5`)           | Rounded and normalized before quote + upstream request            |
+| `options.sound`        | `boolean`            | No       | default `false`                          | Enables audio generation                                          |
+| `options.mode`         | `string`             | No       | `std` / `pro` (default `std`)            | `std` follows Standard pricing; `pro` follows Pro pricing         |
+| `options.aspect_ratio` | `string`             | No       | `1:1` / `16:9` / `9:16` (default `16:9`) | Used for text-to-video; provider may ignore it for image-to-video |
+
+#### `kling-3.0-motion-control`
+
+Supported scenes: `video-to-video`.
+Validation level: strict.
+
+| Field                           | Type       | Required | Allowed / Default                   | Notes                                                                                   |
+| ------------------------------- | ---------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------- |
+| `prompt`                        | `string`   | No       | any string                          | Optional prompt refinement                                                              |
+| `options.video_input`           | `string[]` | Yes      | first video URL used                | Required motion reference video                                                         |
+| `options.image_input`           | `string[]` | Yes      | URL array                           | At least one reference image is required                                                |
+| `options.mode`                  | `string`   | No       | `720p` / `1080p` (default `720p`)   | `720p` bills 20 credits/s; `1080p` bills 27 credits/s                                   |
+| `options.character_orientation` | `string`   | No       | `image` / `video` (default `video`) | `image` orientation limits input video to `10s`; `video` orientation allows up to `30s` |
+| `options.input_video_duration`  | `number`   | No       | positive number                     | Improves local quote accuracy; provider still uses uploaded video metadata upstream     |
 
 #### `veo-3.1-fast`
 
@@ -636,12 +943,12 @@ Fields are the same as `veo-3.1-fast`, except:
 Supported scenes: `video-to-video`.
 Validation level: pass-through.
 
-| Field                 | Type       | Required          | Allowed / Default    | Notes                                                                     |
-| --------------------- | ---------- | ----------------- | -------------------- | ------------------------------------------------------------------------- |
-| `prompt`              | `string`   | Yes               | non-empty            | Required                                                                  |
+| Field                 | Type       | Required             | Allowed / Default    | Notes                                                                     |
+| --------------------- | ---------- | -------------------- | -------------------- | ------------------------------------------------------------------------- |
+| `prompt`              | `string`   | Yes                  | non-empty            | Required                                                                  |
 | `options.video_input` | `string[]` | Required in practice | first video URL used | If scene is omitted, non-empty `video_input` helps infer `video-to-video` |
-| `options.image_input` | `string[]` | No                | URL array            | Optional reference images                                                  |
-| `options.*`           | `any`      | No                | provider-defined     | All extra keys are forwarded                                              |
+| `options.image_input` | `string[]` | No                   | URL array            | Optional reference images                                                 |
+| `options.*`           | `any`      | No                   | provider-defined     | All extra keys are forwarded                                              |
 
 `kling-video-o1` is pass-through. Besides `options.video_input`, provider-defined fields under `options.*` may be required.
 
@@ -667,7 +974,7 @@ If you want deterministic routing, always pass `scene` explicitly.
 Poll this endpoint until task reaches a final status.
 
 ```bash
-curl -X GET 'https://<your-domain>/api/v1/tasks/<TASK_ID>' \
+curl -X GET 'https://cyberbara.com/api/v1/tasks/<TASK_ID>' \
   -H 'Authorization: Bearer <API_KEY>'
 ```
 
@@ -799,7 +1106,7 @@ Task failed:
 1. Call `GET /api/v1/models`
 2. If needed, call `POST /api/v1/uploads/images` for reference URLs
 3. Call `POST /api/v1/credits/quote`
-4. Create a task via image/video generation endpoint
+4. Create a task via the matching image, video, audio, or music generation endpoint
 5. Poll `GET /api/v1/tasks/{taskId}` until final
 6. Check billing impact via `GET /api/v1/credits/usage`
 

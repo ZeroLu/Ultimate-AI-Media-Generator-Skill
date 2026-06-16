@@ -154,7 +154,7 @@ def build_parser() -> argparse.ArgumentParser:
     models_cmd = subparsers.add_parser("models", help="List available models.")
     models_cmd.add_argument(
         "--media-type",
-        choices=["image", "video"],
+        choices=["image", "video", "audio", "music"],
         help="Optional media type filter.",
     )
 
@@ -275,8 +275,114 @@ def build_parser() -> argparse.ArgumentParser:
         help="Save generated media files but do not auto-open them.",
     )
 
+    audio_cmd = subparsers.add_parser(
+        "generate-audio",
+        help="Quote credits, require confirmation, then create audio generation task(s).",
+    )
+    add_json_input_flags(audio_cmd, required=True)
+    audio_cmd.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip interactive prompt after quote. Use only after explicit user approval.",
+    )
+    audio_cmd.add_argument(
+        "--async",
+        dest="async_mode",
+        action="store_true",
+        help="Submit task(s) only and return immediately without waiting for outputs.",
+    )
+    audio_cmd.add_argument(
+        "--interval",
+        type=float,
+        default=5.0,
+        help="Polling interval in seconds for waiting final output (default: 5).",
+    )
+    audio_cmd.add_argument(
+        "--wait-timeout",
+        type=int,
+        default=900,
+        help="Max seconds to wait for task completion after submit (default: 900).",
+    )
+    audio_cmd.add_argument(
+        "--timeout-per-request",
+        type=int,
+        default=120,
+        help="HTTP timeout per polling request in seconds (default: 120).",
+    )
+    audio_cmd.add_argument(
+        "--output-dir",
+        default=DEFAULT_OUTPUT_DIR,
+        help=f"Directory to save generated media files (default: {DEFAULT_OUTPUT_DIR}).",
+    )
+    audio_cmd.add_argument(
+        "--no-save",
+        action="store_true",
+        help="Do not save generated media files locally.",
+    )
+    audio_cmd.add_argument(
+        "--no-open",
+        action="store_true",
+        help="Save generated media files but do not auto-open them.",
+    )
+
+    music_cmd = subparsers.add_parser(
+        "generate-music",
+        help="Quote credits, require confirmation, then create music generation task(s).",
+    )
+    add_json_input_flags(music_cmd, required=True)
+    music_cmd.add_argument(
+        "--yes",
+        action="store_true",
+        help="Skip interactive prompt after quote. Use only after explicit user approval.",
+    )
+    music_cmd.add_argument(
+        "--async",
+        dest="async_mode",
+        action="store_true",
+        help="Submit task(s) only and return immediately without waiting for outputs.",
+    )
+    music_cmd.add_argument(
+        "--interval",
+        type=float,
+        default=5.0,
+        help="Polling interval in seconds for waiting final output (default: 5).",
+    )
+    music_cmd.add_argument(
+        "--wait-timeout",
+        type=int,
+        default=900,
+        help="Max seconds to wait for task completion after submit (default: 900).",
+    )
+    music_cmd.add_argument(
+        "--timeout-per-request",
+        type=int,
+        default=120,
+        help="HTTP timeout per polling request in seconds (default: 120).",
+    )
+    music_cmd.add_argument(
+        "--output-dir",
+        default=DEFAULT_OUTPUT_DIR,
+        help=f"Directory to save generated media files (default: {DEFAULT_OUTPUT_DIR}).",
+    )
+    music_cmd.add_argument(
+        "--no-save",
+        action="store_true",
+        help="Do not save generated media files locally.",
+    )
+    music_cmd.add_argument(
+        "--no-open",
+        action="store_true",
+        help="Save generated media files but do not auto-open them.",
+    )
+
     upload_cmd = subparsers.add_parser("upload-images", help="Upload reference image files.")
     upload_cmd.add_argument("files", nargs="+", help="Local image files to upload.")
+
+    upload_videos_cmd = subparsers.add_parser(
+        "upload-videos",
+        help="Upload reference video files.",
+    )
+    upload_videos_cmd.add_argument("files", nargs="+", help="Local video files to upload.")
 
     task_cmd = subparsers.add_parser("task", help="Fetch task status by task ID.")
     task_cmd.add_argument("--task-id", required=True, help="Task ID.")
@@ -423,8 +529,63 @@ def main() -> None:
         print_payload(payload, args.compact)
         return
 
+    if args.command == "generate-audio":
+        request_payload = load_json_payload(args.json, args.file)
+        submit_payload = generate_media_with_credit_guard(
+            client=client,
+            media_label="audio",
+            payload_body=request_payload,
+            yes=args.yes,
+            timeout=args.timeout,
+        )
+        if args.async_mode:
+            print_payload(submit_payload, args.compact)
+            return
+        payload = _finalize_submitted_tasks(
+            client=client,
+            submit_payload=submit_payload,
+            interval=args.interval,
+            wait_timeout=args.wait_timeout,
+            timeout_per_request=args.timeout_per_request,
+            save_outputs=not args.no_save,
+            open_outputs=not args.no_open,
+            output_dir=args.output_dir,
+        )
+        print_payload(payload, args.compact)
+        return
+
+    if args.command == "generate-music":
+        request_payload = load_json_payload(args.json, args.file)
+        submit_payload = generate_media_with_credit_guard(
+            client=client,
+            media_label="music",
+            payload_body=request_payload,
+            yes=args.yes,
+            timeout=args.timeout,
+        )
+        if args.async_mode:
+            print_payload(submit_payload, args.compact)
+            return
+        payload = _finalize_submitted_tasks(
+            client=client,
+            submit_payload=submit_payload,
+            interval=args.interval,
+            wait_timeout=args.wait_timeout,
+            timeout_per_request=args.timeout_per_request,
+            save_outputs=not args.no_save,
+            open_outputs=not args.no_open,
+            output_dir=args.output_dir,
+        )
+        print_payload(payload, args.compact)
+        return
+
     if args.command == "upload-images":
         payload = client.upload_images(args.files, timeout=args.timeout)
+        print_payload(payload, args.compact)
+        return
+
+    if args.command == "upload-videos":
+        payload = client.upload_videos(args.files, timeout=args.timeout)
         print_payload(payload, args.compact)
         return
 

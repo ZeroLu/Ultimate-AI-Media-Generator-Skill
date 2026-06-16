@@ -1,13 +1,13 @@
 ---
 name: ultimate-ai-media-generator-skill
-description: Generate and monitor CyberBara Public API v1 image and video tasks end-to-end. Use when work involves CyberBara `/api/v1` endpoints for listing models, uploading reference images, quoting credits, creating generation tasks, polling task status, or checking credits balance and usage.
+description: Generate and monitor CyberBara Public API v1 image, video, audio, and music tasks end-to-end. Use when work involves CyberBara `/api/v1` endpoints for listing models, uploading reference media, quoting credits, creating generation tasks, polling task status, checking credits balance and usage, or saving final media outputs.
 ---
 
 # Ultimate-AI-Media-Generator-Skill
 
 ## Overview
 
-Use this skill to call CyberBara APIs reliably, create image/video generation tasks, and return final media URLs with credit-aware flow.
+Use this skill to call CyberBara APIs reliably, create image, video, audio, and music generation tasks, and return final media URLs with credit-aware flow.
 
 ## Implementation Architecture
 
@@ -68,7 +68,7 @@ Future runs reuse this cached key, so users do not need to provide it every time
 ## Run The Standard Generation Flow
 
 1. Discover available models.
-2. Upload reference images when task scene needs image inputs.
+2. Upload reference images or videos when task scene needs local media inputs.
 3. Quote credits before creating a generation task.
 4. Create image or video generation task and wait for final output.
 5. Automatically save generated media locally and open it.
@@ -80,8 +80,15 @@ Reference commands:
 # 1) List video models
 python3 scripts/cyberbara_api.py models --media-type video
 
+# Also available: image, audio, and music models
+python3 scripts/cyberbara_api.py models --media-type audio
+python3 scripts/cyberbara_api.py models --media-type music
+
 # 2) Upload local reference images
 python3 scripts/cyberbara_api.py upload-images ./frame.png ./style.jpg
+
+# Upload local reference videos
+python3 scripts/cyberbara_api.py upload-videos ./clip.mp4
 
 # 3) Estimate credits
 python3 scripts/cyberbara_api.py quote --json '{
@@ -147,6 +154,20 @@ python3 scripts/cyberbara_api.py generate-video --json '{
   "scene":"text-to-video",
   "options":{"duration":"10","resolution":"standard"}
 }' --yes
+
+python3 scripts/cyberbara_api.py generate-audio --json '{
+  "model":"suno-sound-v5-5",
+  "prompt":"A short cinematic whoosh with soft digital sparkle",
+  "scene":"text-to-audio",
+  "options":{"loop":false}
+}' --yes
+
+python3 scripts/cyberbara_api.py generate-music --json '{
+  "model":"suno-music-v5",
+  "prompt":"Warm lo-fi study music with mellow keys",
+  "scene":"text-to-music",
+  "options":{"instrumental":true}
+}' --yes
 ```
 
 Control auto-save and open behavior:
@@ -167,11 +188,14 @@ python3 scripts/cyberbara_api.py generate-video --json '{...}' --yes --async
 `scripts/cyberbara_api.py` supports:
 
 - `setup-api-key` to persist API key into local cache
-- `models` to list public models (`--media-type image|video` optional)
+- `models` to list public models (`--media-type image|video|audio|music` optional)
 - `upload-images` to upload local image files to `/api/v1/uploads/images`
+- `upload-videos` to upload local video files to `/api/v1/uploads/videos`
 - `quote` to estimate credit cost from JSON request body
 - `generate-image` to auto-quote credits, compute total for batch requests, require formal confirmation, create task(s), wait, then save/open outputs
 - `generate-video` to auto-quote credits, compute total for batch requests, require formal confirmation, create task(s), wait, then save/open outputs
+- `generate-audio` to auto-quote credits, compute total for batch requests, require formal confirmation, create task(s), wait, then save/open outputs
+- `generate-music` to auto-quote credits, compute total for batch requests, require formal confirmation, create task(s), wait, then save/open outputs
 - `task` to fetch task snapshot by task ID
 - `wait` to poll task until `success`, `failed`, or `canceled`, then save/open outputs
 - `balance` and `usage` to inspect credits
@@ -187,8 +211,8 @@ Use `--file request.json` instead of `--json` for long payloads.
 - Include `options.image_input` for `image-to-image` and `image-to-video`.
 - Include `options.video_input` for `video-to-video`.
 - Poll `/api/v1/tasks/{taskId}` until final status; only `success` guarantees output URLs.
-- Before every image or video generation submission, obtain quote first and get explicit user confirmation.
-- For multiple image/video requests, calculate and present total estimated credits before submission.
+- Before every image, video, audio, or music generation submission, obtain quote first and get explicit user confirmation.
+- For multiple image/video/audio/music requests, calculate and present total estimated credits before submission.
 - Save output files under `media_outputs/` by default and auto-open them unless disabled.
 
 ## Navigate Detailed Model Options

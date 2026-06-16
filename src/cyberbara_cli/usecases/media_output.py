@@ -15,6 +15,47 @@ import uuid
 from cyberbara_cli.constants import DEFAULT_HTTP_USER_AGENT, DEFAULT_OUTPUT_DIR
 
 
+def _collect_urls_from_unknown(value: Any, *, depth: int = 0) -> list[str]:
+    if depth > 5 or value is None:
+        return []
+
+    if isinstance(value, str):
+        text = value.strip()
+        if text.startswith(("http://", "https://")):
+            return [text]
+        return []
+
+    urls: list[str] = []
+    if isinstance(value, list):
+        for item in value:
+            urls.extend(_collect_urls_from_unknown(item, depth=depth + 1))
+        return urls
+
+    if isinstance(value, dict):
+        preferred_keys = [
+            "images",
+            "videos",
+            "audios",
+            "audio",
+            "music",
+            "songs",
+            "url",
+            "uri",
+            "src",
+            "imageUrl",
+            "videoUrl",
+            "audioUrl",
+            "streamAudioUrl",
+            "sourceAudioUrl",
+        ]
+        for key in preferred_keys:
+            if key in value:
+                urls.extend(_collect_urls_from_unknown(value[key], depth=depth + 1))
+        return urls
+
+    return []
+
+
 def _extract_output_urls(task_payload: Any) -> list[str]:
     if not isinstance(task_payload, dict):
         return []
@@ -28,15 +69,7 @@ def _extract_output_urls(task_payload: Any) -> list[str]:
     if not isinstance(output, dict):
         return []
 
-    urls: list[str] = []
-    images = output.get("images")
-    videos = output.get("videos")
-    for collection in (images, videos):
-        if isinstance(collection, list):
-            for item in collection:
-                if isinstance(item, str) and item.strip():
-                    urls.append(item.strip())
-    return urls
+    return list(dict.fromkeys(_collect_urls_from_unknown(output)))
 
 
 def _guess_extension(url: str, content_type: str | None) -> str:
@@ -122,4 +155,3 @@ def persist_and_open_task_output(
             _open_file(path)
 
     return saved_files
-
