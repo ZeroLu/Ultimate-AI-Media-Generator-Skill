@@ -2,6 +2,7 @@
 # Ultimate-AI-Media-Generator-Skill
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/stargazers)
+[![AtomGitStars](https://atomgit.com/ZeroLuAtom/Ultimate-AI-Media-Generator-Skill/star/badge.svg)](https://atomgit.com/ZeroLuAtom/Ultimate-AI-Media-Generator-Skill)
 [![GitHub Forks](https://img.shields.io/github/forks/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](https://github.com/ZeroLu/Ultimate-AI-Media-Generator-Skill/network/members)
 [![MIT License](https://img.shields.io/github/license/ZeroLu/Ultimate-AI-Media-Generator-Skill?style=for-the-badge)](./LICENSE)
 
